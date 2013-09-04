@@ -1,0 +1,488 @@
+<div class="slides">
+    <section>
+        <h1>#jsIO<br/>
+        <img src="https://si0.twimg.com/profile_background_images/378800000060959043/28096a0b9dc26e87b3f585c760812c06.png" style="margin-top: 50px; width: 190px; height: 190px; max-height: none; max-width: none;"><br/>
+        <h1>Plugins de jQuery</h1>
+    </section>
+    <section id="ponentes">
+        <h2>Ponentes</h2>
+        <div style="float:left; width:50%;">
+            <img width="256" src="https://si0.twimg.com/profile_images/3637478551/a82962800f34638d080bdd342a71037e.jpeg">
+            <h3>Quique Fdez. Guerra</h3>
+            <h4><a href="https://twitter.com/ckgrafico">@CKgrafico</a></h4>
+        </div>
+
+        <div style="float:left; width:50%;">
+            <img width="256" src="https://si0.twimg.com/profile_images/378800000402027047/3769b2228d34560217f64114efb0fd6c.png">
+            <h3>Jorge del Casar</h3>
+            <h4><a href="https://twitter.com/jorgecasar">@JorgeCasar</a></h4>
+        </div>
+    </section>
+    <section>
+        <section id="encapsulamiento">
+            <h2>
+               Encapsulamiento
+            </h2>
+            <p>Técnicas de ocultación para aislar el objeto del exterior</p>
+        </section>
+        <section id="aislamiento">
+            <h2>
+               Aislamiento
+            </h2>
+            <p>Las propiedades del objeto sólo pueden gestionarse con los métodos definidos en ese objeto</p>
+
+        </section>
+        <section id="datos_privados">
+            <h2>
+                Propiedades y métodos privados
+            </h2>
+            <p>Restringir el acceso al código</p>
+            <p>Administrar el espacio de nombres global 'namespace'</p>
+        </section>
+        <section id="closure">
+            <h2>
+               Closure
+            </h2>
+            <p>
+                Es un tipo especial de objeto que combina dos cosas:
+                <br>una función, y el entorno en que se creó esa función
+            </p>
+        </section>
+        <section id="patron_modulo">
+            <h2>
+               Patrón módulo
+            </h2>
+            <p>Todos los métodos se mantiene como privados y sólo se exponen los que se decide al final</p>
+            <p><a href="http://addyosmani.com/resources/essentialjsdesignpatterns/book/#modulepatternjavascript">Learning JavaScript Design Patterns - Module Pattern</a></p>
+        </section>
+    </section>
+    <section>
+        <section id="performance">
+            <h2>
+               Cuida el rendimiento
+            </h2>
+        </section>
+        <section id="append_bucles">
+            <h3>
+               Añade al DOM fuera de los bucles
+            </h3>
+            <p>
+                <font color="#e06666">Mal</font>
+            </p>
+<pre><code>$.each( myArray, function( i, item ) { $( selector ).append(
+    "&lt;li&gt;" + item + &lt;/li&gt;"
+); });</code></pre>
+
+            <p>
+                <font color="#93c47d">Bien</font>
+            </p>
+<pre><code>var lis = [];
+$.each( myArray, function( i, item ) {
+    lis.push( $("&lt;li&gt;" ).text(item));
+});
+$ul.append(lis);</code></pre>
+            <p><font color="#6aa84f">Mejor</font></p>
+<pre><code>var lis = [];
+$.each( myArray, function( i, item ) {
+    lis.push("&lt;li&gt;" + item + "&lt;/li&gt;"</span>);
+});
+$( selector ).html( lis.join("") );</code></pre>
+        </section>
+        <section id="elementos_ausentes">
+            <h3>
+               NO actues sobre elementos ausentes
+            </h3>
+            <p>
+                <font color="#e06666">Mal</font>
+            </p>
+<pre><code>$( "#noExiste" ).slideUp();</code></pre>
+            <p>
+                <font color="#93c47d">Bien</font>
+            </p>
+<pre><code>var $mySelection = $( "#noExiste" );
+if ( $mySelection.length ) {
+    $mySelection.slideUp();
+}</code></pre>
+            <p>
+                <font color="#6aa84f">Mejor</font>
+            </p>
+<pre><code>jQuery.fn.doOnce = function( func ) {
+    this.length &amp;&amp; func.apply( this );
+    return this;
+}
+$( "li.cartitems" ).doOnce(function() { 
+    this.slideUp()
+});</code></pre>
+        </section>
+        <section id="optimizar_selectores/id">
+            <h3>
+               Optimiza los selectores
+            </h3>
+            <h4>Selectores basado en ID</h4>
+            
+            <p>
+                <font color="#e06666">Mal</font>
+            </p>
+<pre><code>$( "#container div.item" );</code></pre>
+            <p>
+                <font color="#93c47d">Bien</font>
+            </p>
+<pre><code>$( "#container .item" );</code></pre>
+            <p>
+                <font color="#6aa84f">Mejor</font>
+            </p>
+<pre><code>$( "#container" ).find( ".item" );</code></pre>
+        </section>
+        <section id="optimizar_selectores/especificidad">
+            <h3>Optimiza los selectores</h3>
+            <p>Especificidad</p>
+            <p>
+                <font color="#e06666">Mal</font>
+            </p>
+<pre><code>$( "ul.list li.item" );</code></pre>
+            <p>
+                <font color="#93c47d">Bien</font>
+            </p>
+<pre><code>$("ul.list").find(".forth");</code></pre>
+            <p>
+                <font color="#6aa84f">Mejor</font>
+            </p>
+<pre><code>$( ".list").find(".item");</code></pre>
+        </section>
+        <section id="optimizar_selectores/universal">
+            <h3>
+                Optimiza los selectores
+            </h3>
+            <h4>Selector universal</h4>
+            <p>
+                <font color="#e06666">Mal</font>
+            </p>
+<pre><code>$( ".buttons &gt; *" );</code></pre>
+            <p>
+                <font color="#93c47d">Bien</font>
+            </p>
+<pre><code>$( ".buttons" ).children();</code></pre>
+        </section>
+        <section id="optimizar_selectores/universal_implicito">
+            <h3>
+                Optimiza los selectores
+            </h3>
+            <h4>Selector universal implicito</h4>
+            <p>
+                <font color="#e06666">Mal</font>
+            </p>
+<pre><code>$( ".category :radio" ); // Implementado selector universal.
+$( ".category *:radio" ); // Lo mismo, pero de forma explícita.</code></pre>
+            <p>
+                <font color="#93c47d">Bien</font>
+            </p>
+<pre><code>$( ".category input:radio" );</code></pre>
+            <p>
+                <font color="#6aa84f">Mejor</font>
+            </p>
+<pre><code>$( ".category" ).find( "input:radio" );</code></pre>
+
+        </section>
+    </section>
+    <section id="jquery_doc">
+        <h2>
+            No trates a jQuery<br>como una caja negra
+        </h2>
+        <p>Utiliza el código fuente como tu documentación.</p>
+        <p>
+            <a href="http://bit.ly/jqsource">http://bit.ly/jqsource</a>
+        </p>
+    </section>
+    <section id="jquery_plugins">
+        <h1>
+           jQuery Plugins
+        </h1>
+        <h2>Son método que se utilizan para extender el prototipo del objeto <b>jQuery</b>.</h2>
+    </section>
+    <section>
+        <section id="conceptos_basicos">
+            <h2>
+               Conceptos básicos
+            </h2>
+        </section>
+        <section id="conceptos_basicos/extender_jquery">
+            <h3>
+               Extender las funciones de jQuery
+            </h3>
+<pre><code>$.fn.colorear = function() {
+    this.css("color","green";
+};
+$(".coloreable").colorear();</code></pre>
+        </section>
+        <section id="conceptos_basicos/encadenamiento">
+            <h3>
+               Encadenamiento
+            </h3>
+<pre><code>$.fn.colorear = function() {
+    this.css("color", "green");
+    return this;
+};
+$(".coloreable").colorear().addClass(".coloreado");</code></pre>
+        </section>
+        <section id="conceptos_basicos/protejer_$_ambito">
+            <h3>
+               Proteger el alias $ y añadir ámbito
+            </h3>
+<pre><code>(function( $ ){
+    $.fn.colorear = function() {
+        this.css("color", "green");
+        return this;
+    };
+}( jQuery ));</code></pre>
+        </section>
+        <section id="conceptos_basicos/variables_privadas">
+            <h3>
+               Variables privadas
+            </h3>
+<pre><code>(function( $ ){
+    var tono = "green";
+    $.fn.colorear = function() {
+        this.css( "color", tono );
+        return this;
+    };
+}( jQuery ));</code></pre>
+        </section>
+        <section id="conceptos_basicos/minimizar_huella">
+            <h3>
+               Minimizar la huella del plugin
+            </h3>
+            <p>
+                <font color="#e06666">Mal</font>
+            </p>
+            <div>
+<pre><code>( function( $ ) {
+    $.fn.colorearVerde = function(){ // Código para colorear verde. };
+    $.fn.colorearRojo= function(){ // Código para colorear rojo. };
+}( jQuery ));</code></pre>
+            <p>
+                <font color="#93c47d">Bien</font>
+            </p>
+<pre><code>(function( $ ) {
+    $.fn.colorear = function( color ) {
+        if ( color === "verde") { // Código para colorear verde. }
+        else if ( color === "rojo") { // Código para colorear rojo. }
+    }
+}( jQuery ));</code></pre>
+        </section>
+        <section id="conceptos_basicos/metodo_each">
+            <h3>
+               Usar el método each
+            </h3>
+<pre><code>$.fn.colorear = function() {
+    return this.each( function() {
+        // Hacer algo a cada elemento aquí.
+    });
+};</code></pre>
+        </section>
+        <section id="conceptos_basicos/aceptar_opciones">
+            <h3>
+               Aceptar opciones
+            </h3>
+            <div>
+                <br>
+            </div>
+            <div>
+<pre><code>( function ( $ ){
+    $.fn.colorear = function( options ) {
+        // Esta es la forma más facil de tener opciones por defecto.
+        var settings = $.extend({ // Estos son los de por defecto.
+            color: "green",
+            background: "white"
+        }, options );
+        // Colorear la colección usando la variable de configuración.
+        return this.css({
+            color: settings.color,
+            background: settings.background
+        });
+    };
+}( jQuery ));
+
+$(".coloreable").colorear({color: "orange"});</code></pre>
+        </section>
+    </section>
+    <section id="conceptos_avanzados">
+        <section id="conceptos_avanzados">
+            <h2>
+               Conceptos avanzados
+            </h2>
+        </section>
+        <section id="conceptos_avanzados/acceso_publico_ajustes">
+            <h3>
+               Acceso público a los ajustes predeterminados Plugin
+            </h3>
+<pre><code>$.fn.colorear = function( options ) {
+    // Extendemos nuestras opciones por defecto con las que pasan.
+    // Nota que el primer argumento a extender es un objeto vacío
+    // Esto es para evitar sobre escribir nuestro objeto defaults.
+    var opts = $.extend( {}, $.fn.colorear.defaults, options );
+    // La implementación del plugin va aquí
+};
+
+// Plugin defaults – los añadimos como propiedad de nuestro plugin.
+$.fn.colorear.defaults = {
+    color: "green",
+    background: "white"
+};</code></pre>
+        </section>
+        <section id="conceptos_avanzados/acceso_publico_ajustes/uso">
+            <h3>
+               Acceso público a los ajustes predeterminados Plugin
+            </h3>
+            <p>
+                <font color="#e06666">Mal</font>
+            </p>
+<pre><code>var opts = $.extend( {}, $.fn.colorear.defaults);</code></pre>
+<pre><code>var opts = $.extend( {}, options, $.fn.colorear.defaults );</code></pre>
+            <p>
+                <font color="#93c47d">Bien</font>
+            </p>
+<pre><code>var opts = $.extend( {}, $.fn.colorear.defaults, options );</code></pre>
+<pre><code>var opts = { icon: "tree", text: "void" '});
+opts = $.extend( opts, $.fn.colorear.defaults, options );</code></pre>
+        </section>
+        <section id="conceptos_avanzados/sobreescribir_ajustes">
+            <h3>
+               Sobreescribir ajustes predeterminados
+            </h3>
+<pre><code>// Sobre escribe el color por defecto.
+$.fn.colorear.defaults.color = "blue";
+                                
+// Llama al plugin usando los nuevos valores por defecto.
+$(".coloreable").colorear();
+
+// Sobre escribe los valores por defecto pasando opciones al plugin.
+$(".coloreable").colorear({ color: "orange" });</code></pre>
+        </section>
+        <section id="conceptos_avanzados/acceso_funciones_secundarias">
+            <h3>
+               Acceso público a funciones secundarias
+            </h3>
+<pre><code>$.fn.colorear = function( options ) {
+    return this.each(function() {
+        var $this = $( this );
+        // ...
+        var markup = $this.html();
+        // Llamamos a la función de formateo.
+        markup = $.fn.colorear.format( markup );
+        $this.html( markup );
+    });
+};
+// Definimos nuestra función de formateo.
+$.fn.colorear.format = function( txt ) {
+    return "<div class="coloreado">" + txt + "</div>";
+};</code></pre>
+        </section>
+        <section id="conceptos_avanzados/funciones_privadas">
+            <h3>
+               Funciones privadas
+            </h3>
+<pre><code>// Creamos la closure.
+(function( $ ) {
+    // Definimos el plugin.
+    $.fn.colorear = function( options ) {
+        debug( this );
+    };
+    // Función privada para depuración.
+    function debug( $obj ) {
+        if ( window.console &amp;&amp; window.console.log ) {
+            window.console.log( "numero de objetos: " + $obj.size() );
+        }
+    };
+ // Fin de la closure.
+})( jQuery );</code></pre>
+        </section>
+        <section id="conceptos_avanzados/metadatos">
+            <h3>
+               Metadatos
+            </h3>
+<pre><code>$.fn.colorear = function( options ) { 
+    // Construir opciones principales antes iteración elemento.
+    var opts = $.extend( {}, $.fn.colorear.defaults, options ); 
+    return this.each(function() {
+        var $this = $( this );
+
+
+        // Construimos opciones específicas del elemento.
+        // Extendemos nuestro objeto de opciones con los metadatos.
+        // Tiene prioridad lo definido mediante data-* en el HTML.
+
+        var o = $.extend( {}, opts, $this.data() );
+    });
+ 
+};</code></pre>
+        </section>
+        <section id="conceptos_avanzados/callback">
+            <h3>
+               Callback
+            </h3>
+            <div>
+<pre><code>(function($){
+   var $.fn.miPlugin.dafaults = {
+
+     // Definimos una función anónima vacía para no tener que comprobar
+
+     // su existencia cuando la llamemos.
+     callback: function() {}, // $.noop,
+     // ... resto de configuración ...
+   };
+   // Más tarde en el plugin:
+   $nextButton.on( "click", showNextImage );
+   function showNextImage() { 
+     // Cosas para mostrar la imagen...
+
+     // Aquí está el callback.
+     opts.callback.call( this );
+
+  }
+})(jQuery);</code></pre>
+
+
+        </section>
+    </section>
+    <section id="demo">
+        <h2>
+            DEMO
+        </h2>
+        <h2>
+            <a href="https://github.com/JavascriptIO/jQuery/tree/master/plugins-jquery"><img src="http://idiap.github.io/bob/img/github.png" style="width: 128px; height: 128px;"><br>View on Github</a>
+        </h2>
+
+
+    </section>
+    <section id="gracias">
+        <section>
+<pre><code>(function( $ ) {
+  $.fn.agradecer = function( options ) {
+
+    var opts = $.extend( {}, $.fn.agradecer.defaults, options );
+    function getAgradecimiento( ) {
+      return "&lt;h1&gt;¡GRACIAS!&lt;/h1&gt;" + 
+             "&lt;h2&gt;" + opts.ponentes.join(" ") + "&lt;/h2&gt;";
+    };
+    return this.each(function() {
+      var $this = $( this );
+      $this.append(getAgradecimiento());
+    });
+
+  };
+  $.fn.agradecer.defaults = {
+    ponentes: ["CKgrafico", "JorgeCasar"]
+  };
+})( jQuery );
+$('.lastSlide').agradecer();</code></pre>
+        </section>
+        <section>
+            <h1>
+                ¡GRACIAS!
+            </h1>
+            <h2>
+               CKgrafico JorgeCasar
+            </h2>
+        </section>
+    </section>
+</div>
