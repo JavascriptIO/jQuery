@@ -1,3 +1,3 @@
 [submodule "slides"]
 	path = slides
-	url = git://github.com/JavascriptIO/Deck-Wrapper-for-reveal.js.git
+	url = https://github.com/JavascriptIO/Deck-Wrapper-for-reveal.js.git
