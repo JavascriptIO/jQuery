@@ -1,7 +1,7 @@
 jQuery
 ======
 
-Repositorio con las charlas y ejemplos de los #jsIO
+Repositorio con las charlas y ejemplos de los #jsIO sobre jQuery
 
 * jQuery Plugins
   * [Slides](http://javascriptio.github.io/jQuery/slides/?title=jquery-plugins)
